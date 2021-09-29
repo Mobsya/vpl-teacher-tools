@@ -4,7 +4,7 @@
 python3 setup_cx_freeze.py bdist_msi
 
 $compress = @{
-    Path = ".\dist\VPL3Server-cx-Freeze-0.1.0-amd64.msi", "readme-win.txt"
+    Path = ".\dist\VPL3Server-cx-Freeze-0.1.0-win64.msi", "readme-win.txt"
     CompressionLevel = "Fastest"
     DestinationPath = "VPL3Server-win.zip"
 }
