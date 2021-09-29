@@ -14,12 +14,10 @@ jobs:
   steps:
   - script: echo Hello, world!
     displayName: 'Run a one-line script'
-  - task: PythonScript@0
-    inputs:
-      scriptSource: 'inline'
-      script: '-m pip install -U py2app'
       
-  - script: make $(Build.ArtifactStagingDirectory)/VPLServer.dmg
+  - script: |
+      pip install -U py2app
+      make $(Build.ArtifactStagingDirectory)/VPLServer.dmg
     displayName: 'Make dmg'
 
   - task: PublishBuildArtifacts@1
@@ -37,12 +35,10 @@ jobs:
   - script: echo Hello, world!
     displayName: 'Run a one-line script'
 
-  - task: PythonScript@0
-    inputs:
-      scriptSource: 'inline'
-      script: |
-        -m pip install -U py2app
-        -m pip install --upgrade cx_Freeze
+  - script: |
+      -m pip install -U py2app
+      -m pip install --upgrade cx_Freeze
+      displayName: 'Install with pip'
 
   - task: PowerShell@2
     inputs:
