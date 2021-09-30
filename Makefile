@@ -250,12 +250,9 @@ whl: setup.py $(VPL3PKGFILES) $(DOCFILES) $(VPLFILES) $(THYMIOFILES) $(UIFILES) 
 VPL3Server.app: setup_app.py launch_objc.py $(VPL3PKGFILES) $(DOCFILES) $(VPLFILES) $(THYMIOFILES) $(UIFILES) $(UICLASSICFILES) $(UISVGFILES) $(TOOLSFILES) $(QRFILES) $(DATAFILES) $(BEHAVIORFILES)
 	rm -Rf build
 	python3 setup_app.py py2app
-	codesign -s "$(APPLE_CERTIFICATE_SIGNING_IDENTITY)" -f \
-        "VPL3Server.app/Contents/Frameworks/Python.framework/Versions/3.9"
-    codesign -s "$(APPLE_CERTIFICATE_SIGNING_IDENTITY)" -f \
-        "VPL3Server.app/Contents/MacOS/VPL3Server"
-    codesign -s "$(APPLE_CERTIFICATE_SIGNING_IDENTITY)" -f \
-        "$VPL3Server.app/Contents/MacOS/python"
+	codesign --verbose --timestamp -s "$(APPLE_CERTIFICATE_SIGNING_IDENTITY)" -f "VPL3Server.app/Contents/Frameworks/Python.framework/Versions/3.9"
+	codesign --verbose --deep --timestamp -s "$(APPLE_CERTIFICATE_SIGNING_IDENTITY)" -f "VPL3Server.app/Contents/MacOS/VPL3Server"
+	codesign --verbose --deep --timestamp -s "$(APPLE_CERTIFICATE_SIGNING_IDENTITY)" -f "VPL3Server.app/Contents/MacOS/python"
 
 .PHONY: build/VPL3Server-cxf.app
 build/VPL3Server-cxf.app: setup_cx_freeze.py launch_objc.py $(VPL3PKGFILES) $(DOCFILES) $(VPLFILES) $(THYMIOFILES) $(UIFILES) $(UICLASSICFILES) $(UISVGFILES) $(TOOLSFILES) $(QRFILES) $(DATAFILES) $(BEHAVIORFILES)
@@ -267,6 +264,7 @@ VPLServer.dmg: VPL3Server.app readme-mac.txt
 	mkdir "VPL Server"
 	cp -R $^ "VPL Server"
 	hdiutil create -format UDZO -imagekey zlib-level=9 -srcfolder "VPL Server" $@
+	codesign --verify --verbose --timestamp -s "$(APPLE_CERTIFICATE_SIGNING_IDENTITY)" -f "VPLServer.dmg"
 	rm -Rf "VPL Server"
 
 ServeFile.dmg: Serve\ File.app
