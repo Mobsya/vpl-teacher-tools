@@ -6,6 +6,9 @@
 trigger:
 - master
 
+variables:
+- group: passwords
+
 jobs:
 - job: 'BuildMacDmg'
   pool:
