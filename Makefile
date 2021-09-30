@@ -250,6 +250,12 @@ whl: setup.py $(VPL3PKGFILES) $(DOCFILES) $(VPLFILES) $(THYMIOFILES) $(UIFILES) 
 VPL3Server.app: setup_app.py launch_objc.py $(VPL3PKGFILES) $(DOCFILES) $(VPLFILES) $(THYMIOFILES) $(UIFILES) $(UICLASSICFILES) $(UISVGFILES) $(TOOLSFILES) $(QRFILES) $(DATAFILES) $(BEHAVIORFILES)
 	rm -Rf build
 	python3 setup_app.py py2app
+	codesign -s "$(APPLE_CERTIFICATE_SIGNING_IDENTITY)" -f \
+        "VPL3Server.app/Contents/Frameworks/Python.framework/Versions/3.9"
+    codesign -s "$(APPLE_CERTIFICATE_SIGNING_IDENTITY)" -f \
+        "VPL3Server.app/Contents/MacOS/VPL3Server"
+    codesign -s "$(APPLE_CERTIFICATE_SIGNING_IDENTITY)" -f \
+        "$VPL3Server.app/Contents/MacOS/python"
 
 .PHONY: build/VPL3Server-cxf.app
 build/VPL3Server-cxf.app: setup_cx_freeze.py launch_objc.py $(VPL3PKGFILES) $(DOCFILES) $(VPLFILES) $(THYMIOFILES) $(UIFILES) $(UICLASSICFILES) $(UISVGFILES) $(TOOLSFILES) $(QRFILES) $(DATAFILES) $(BEHAVIORFILES)
