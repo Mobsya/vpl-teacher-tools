@@ -12,8 +12,10 @@ jobs:
     vmImage: 'macOS-10.15'
 
   steps:
-  - script: echo Hello, world!
-    displayName: 'Run a one-line script'
+  - task: InstallAppleCertificate@2
+    inputs:
+      certSecureFile: 'Mobsya.p12'
+      certPwd: $(mobsya-mac-p12)
       
   - script: |
       pip3 install -U py2app
@@ -22,10 +24,12 @@ jobs:
       pip3 install pyobjc-framework-cocoa
       make VPLServer.dmg
     displayName: 'Make dmg'
+    
   - task: CopyFiles@2
     inputs:
       targetFolder: '$(Build.ArtifactStagingDirectory)'
       contents: '*.dmg'
+      
   - task: PublishBuildArtifacts@1
     inputs:
       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
