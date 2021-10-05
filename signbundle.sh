@@ -15,7 +15,7 @@ sign() {
     if [ -z "$IDENTITY" ]; then
         echo "Identity not provided, not signing"
     else
-        codesign --verify --verbose --timestamp -f -s "$IDENTITY" "$@"
+        codesign --verify --verbose --timestamp -s "$IDENTITY" "$@"
     fi
 }
 
