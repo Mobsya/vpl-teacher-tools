@@ -15,7 +15,7 @@ sign() {
     if [ -z "$IDENTITY" ]; then
         echo "Identity not provided, not signing"
     else
-        codesign --verify --verbose --timestamp -s "$IDENTITY" "$@"
+        codesign --verify --verbose --timestamp --entitlements allow.entitlements -s "$IDENTITY" "$@"
     fi
 }
 
@@ -50,3 +50,4 @@ do
     sign --options=runtime $(realpath "$MAIN_DIR/$binary")
 done
 
+sign --force "$1"
