@@ -49,5 +49,3 @@ do
     echo "Signing $MAIN_DIR/$binary"
     sign --options=runtime $(realpath "$MAIN_DIR/$binary")
 done
-
-sign --force "$1"
