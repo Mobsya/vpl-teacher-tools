@@ -258,12 +258,24 @@ build/VPL3Server-cxf.app: setup_cx_freeze.py launch_objc.py $(VPL3PKGFILES) $(DO
 	python3 setup_cx_freeze.py bdist_mac
 
 VPLServer.dmg: VPL3Server.app readme-mac.txt
-	rm -Rf "VPL Server" $@
-	mkdir "VPL Server"
-	cp -R $^ "VPL Server"
-	hdiutil create -format UDZO -imagekey zlib-level=9 -srcfolder "VPL Server" $@
+	rm -Rf "VPLServer" $@
+	mkdir "VPLServer"
+	cp -R $^ "VPLServer"
+	#hdiutil create -format UDZO -imagekey zlib-level=9 -srcfolder "VPLServer" $@
+	"./dmg/create-dmg" \
+    --volname "VPL Server" \
+    --background "background.png" \
+    --window-pos 200 120 \
+    --window-size 620 470 \
+    --icon-size 100 \
+    --icon "VPL3Server.app" 100 300 \
+    --hide-extension "VPL3Server.app" \
+	--icon "readme-mac.txt" 100 100\
+    --app-drop-link 500 300 \
+    "VPLServer.dmg" \
+    "VPLServer"
 	codesign --verify --verbose --timestamp -s "$(APPLE_CERTIFICATE_SIGNING_IDENTITY)" -f "VPLServer.dmg"
-	rm -Rf "VPL Server"
+	rm -Rf "VPLServer"
 
 ServeFile.dmg: Serve\ File.app
 	rm -Rf "Serve File" $@
