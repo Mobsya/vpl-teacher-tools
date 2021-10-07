@@ -262,11 +262,11 @@ VPLServer.dmg: VPL3Server.app readme-mac.txt
 	mkdir "VPLServer"
 	cp -R $^ "VPLServer"
 	#hdiutil create -format UDZO -imagekey zlib-level=9 -srcfolder "VPLServer" $@
-	"./dmg/create-dmg" \
+	create-dmg \
     --volname "VPL Server" \
     --background "background.png" \
     --window-pos 200 120 \
-    --window-size 620 470 \
+    --window-size 640 480 \
     --icon-size 100 \
     --icon "VPL3Server.app" 100 300 \
     --hide-extension "VPL3Server.app" \

@@ -21,6 +21,10 @@ jobs:
       certPwd: $(mobsya-mac-p12)
       
   - script: |
+      brew install create-dmg
+    displayName: 'Install dependencies with HomeBrew'
+    
+  - script: |
       pip3 install -U py2app
       pip3 install thymiodirect websockets websocket websocket_client qrcode
       pip3 install pyobjc-core
