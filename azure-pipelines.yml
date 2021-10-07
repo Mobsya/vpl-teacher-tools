@@ -49,15 +49,11 @@ jobs:
     vmImage: 'windows-2019'
 
   steps:
-  - script: echo Hello, world!
-    displayName: 'Run a one-line script'
-
   - script: |
-      pip install -U py2app
-      pip install --upgrade cx_Freeze
-      pip install thymiodirect websockets websocket websocket_client qrcode
-      pip install tk
-      python 
+      python3 -m pip install py2app
+      python3 -m pip install cx_Freeze
+      python3 -m pip install thymiodirect websockets websocket websocket_client qrcode
+      python3 -m pip install tk
     displayName: 'Install with pip'
 
   - task: PowerShell@2
