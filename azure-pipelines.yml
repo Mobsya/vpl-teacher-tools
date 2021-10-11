@@ -55,11 +55,29 @@ jobs:
       python3 -m pip install thymiodirect websockets websocket websocket_client qrcode
       python3 -m pip install tk
     displayName: 'Install with pip'
-
-  - task: PowerShell@2
-    inputs:
-      filePath: 'build-win.ps1'
+    
       
+  - powershell: |
+      python3 setup_cx_freeze.py bdist_msi
+    displayName: 'Build msi'
+    
+  - task: codesigning@2
+    inputs:
+      secureFileId: 'mobsya-windows.pfx'
+      signCertPassword: '$(mobsya-win-p12)'
+      files: '**/dist/*.msi'
+      timeServer: 'http://timestamp.digicert.com'
+      hashingAlgorithm: 'SHA256'
+      
+  - powershell: |
+      $compress = @{
+        Path = ".\dist\*win64.msi", "readme-win.txt"
+        CompressionLevel = "Fastest"
+        DestinationPath = "VPL3Server-win.zip"
+      }
+      Compress-Archive -Force @compress
+    displayName: 'Create Zip'
+    
   - task: CopyFiles@2
     inputs:
       targetFolder: '$(Build.ArtifactStagingDirectory)'
