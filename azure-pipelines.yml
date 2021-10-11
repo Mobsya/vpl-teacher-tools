@@ -12,7 +12,7 @@ variables:
 jobs:
 - job: 'BuildMacDmg'
   pool:
-    vmImage: 'macOS-10.15'
+    vmImage: 'macOS-10.14'
 
   steps:
   - task: InstallAppleCertificate@2
