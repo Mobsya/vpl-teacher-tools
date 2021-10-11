@@ -63,7 +63,7 @@ jobs:
   - task: CopyFiles@2
     inputs:
       targetFolder: '$(Build.ArtifactStagingDirectory)'
-      contents: '/dist/win64.msi'
+      contents: '*.zip'
       
   - task: PublishBuildArtifacts@1
     inputs:
