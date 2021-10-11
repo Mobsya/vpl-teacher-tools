@@ -1,4 +1,8 @@
 # Setup file to create Windows or Mac app using cx_Freeze
+
+# Python3 package:
+# python3 -m pip install cx-Freeze
+
 # To run it:
 # - Windows: in PowerShell, type
 #   python3 setup_cx_freeze.py bdist_msi
@@ -7,6 +11,7 @@
 #   python3 setup_cx_freeze.py bdist_mac
 # or for the application in a dmg disk image:
 #   python3 setup_cx_freeze.py bdist_dmg
+
 
 import sys, os
 from cx_Freeze import setup, Executable
@@ -29,7 +34,7 @@ excludes = [
 	"numpy",
 	"xmlrpc",
 ]
-packages = ["os", "json",]
+packages = ["os", "json", "websockets.legacy", ]
 
 build_exe = {
     "packages": packages,
@@ -44,7 +49,7 @@ options = {
 setup_options = {
     "name": "VPL3Server-cx-Freeze",
     "description": "VPL3 Teacher Tools built with cx_Freeze",
-    "version": __version__,
+    # "version": __version__,
     "options": options,
 }
 executable_options = {}
@@ -54,8 +59,8 @@ if sys.platform == "win32":
     build_exe["include_msvcr"] = False
     # the end-user should download and install
     # https://aka.ms/vs/16/release/vc_redist.x64.exe
-    executable_options["shortcutName"] = "VPL3 Server"
-    executable_options["shortcutDir"] = "DesktopFolder"    
+    executable_options["shortcut_name"] = "VPL3 Server"
+    executable_options["shortcut_dir"] = "DesktopFolder"
 elif sys.platform == "darwin":
     launcher = "launch_objc.py"
     info_plist_filename = create_plist({

@@ -153,26 +153,31 @@ class Server:
             logging.debug(f"http thread: http server started")
 
         def ws_thread():
-            logging.debug("websocket thread: beginning")
-            asyncio.set_event_loop(asyncio.new_event_loop())
-            self.ws_server = VPLWebSocketServer(db_path=self.db_path,
-                                                logger=self.logger,
-                                                ws_port=self.ws_port,
-                                                ws_link_url=self.ws_link_url,
-                                                on_connect=self.update_con,
-                                                on_disconnect=self.update_con,
-                                                token=self.tt_token,
-                                                default_program_filename=self.default_program_filename)
-            logging.debug("websocket thread: websocket server created")
-            nonlocal ws_started
-            ws_started = True
-            if http_started:
-                logging.debug("websocket thread: http already started")
-                servers_started.set()
-            else:
-                logging.debug("websocket thread: http not started yet")
-            self.ws_server.run()
-            logging.debug(f"websocket thread: websocket server started")
+            try:
+                logging.debug("websocket thread: beginning")
+                asyncio.set_event_loop(asyncio.new_event_loop())
+                logging.debug("websocket thread: event loop set")
+                self.ws_server = VPLWebSocketServer(db_path=self.db_path,
+                                                    logger=self.logger,
+                                                    ws_port=self.ws_port,
+                                                    ws_link_url=self.ws_link_url,
+                                                    on_connect=self.update_con,
+                                                    on_disconnect=self.update_con,
+                                                    token=self.tt_token,
+                                                    default_program_filename=self.default_program_filename)
+                logging.debug("websocket thread: websocket server created")
+                nonlocal ws_started
+                ws_started = True
+                if http_started:
+                    logging.debug("websocket thread: http already started")
+                    servers_started.set()
+                else:
+                    logging.debug("websocket thread: http not started yet")
+                self.ws_server.run()
+                logging.debug(f"websocket thread: websocket server started")
+            except Exception as e:
+                import traceback
+                logging.debug(traceback.format_exc())
 
         self.http = threading.Thread(target=http_thread)
         self.ws = threading.Thread(target=ws_thread)
@@ -187,6 +192,7 @@ class Server:
             if http_started and ws_started:
                 logging.warning(f"but http and websocket have started nevertheless; go on")
             else:
+                logging.warning(f"???")
                 raise Exception(("HTTP Server" if not http_started
                                  else "WebSocket Server" if not ws_started
                                  else "Server") + " launch timeout")
