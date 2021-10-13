@@ -10,7 +10,7 @@ variables:
 - group: passwords
 
 jobs:
-- job: 'BuildMacDmg'
+- job: 'BuildMacDmg1014'
   pool:
     vmImage: 'macOS-10.14'
 
@@ -40,7 +40,71 @@ jobs:
   - task: PublishBuildArtifacts@1
     inputs:
       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      artifactName: 'VPLServer.dmg'
+      artifactName: 'VPLServer-10-14.dmg'
+
+- job: 'BuildMacDmg1015'
+  pool:
+    vmImage: 'macOS-10.15'
+
+  steps:
+  - task: InstallAppleCertificate@2
+    inputs:
+      certSecureFile: 'Mobsya.p12'
+      certPwd: $(mobsya-mac-p12)
+      
+  - script: |
+      brew install create-dmg
+    displayName: 'Install dependencies with HomeBrew'
+    
+  - script: |
+      pip3 install -U py2app
+      pip3 install thymiodirect websockets websocket websocket_client qrcode
+      pip3 install pyobjc-core
+      pip3 install pyobjc-framework-cocoa
+      make VPLServer.dmg
+    displayName: 'Make dmg'
+    
+  - task: CopyFiles@2
+    inputs:
+      targetFolder: '$(Build.ArtifactStagingDirectory)'
+      contents: '*.dmg'
+      
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: 'VPLServer-10-15.dmg'
+
+- job: 'BuildMacDmg11'
+  pool:
+    vmImage: 'macOS-11'
+
+  steps:
+  - task: InstallAppleCertificate@2
+    inputs:
+      certSecureFile: 'Mobsya.p12'
+      certPwd: $(mobsya-mac-p12)
+      
+  - script: |
+      brew install create-dmg
+    displayName: 'Install dependencies with HomeBrew'
+    
+  - script: |
+      pip3 install -U py2app
+      pip3 install thymiodirect websockets websocket websocket_client qrcode
+      pip3 install pyobjc-core
+      pip3 install pyobjc-framework-cocoa
+      make VPLServer.dmg
+    displayName: 'Make dmg'
+    
+  - task: CopyFiles@2
+    inputs:
+      targetFolder: '$(Build.ArtifactStagingDirectory)'
+      contents: '*.dmg'
+      
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: 'VPLServer-11.dmg'
 
 
 
