@@ -27,7 +27,7 @@ jobs:
     displayName: 'Install dependencies with HomeBrew'
     
   - script: |
-      pip3 install -U py2app
+      pip3 install cx-Freeze
       pip3 install thymiodirect websockets websocket_client qrcode
       pip3 install pyobjc-core
       pip3 install pyobjc-framework-cocoa
@@ -59,7 +59,7 @@ jobs:
     displayName: 'Install dependencies with HomeBrew'
     
   - script: |
-      pip3 install -U py2app
+      pip3 install cx-Freeze
       pip3 install thymiodirect websockets websocket_client qrcode
       pip3 install pyobjc-core
       pip3 install pyobjc-framework-cocoa
@@ -91,7 +91,7 @@ jobs:
     displayName: 'Install dependencies with HomeBrew'
     
   - script: |
-      pip3 install -U py2app
+      pip3 install cx-Freeze
       pip3 install thymiodirect websockets websocket_client qrcode
       pip3 install pyobjc-core
       pip3 install pyobjc-framework-cocoa
