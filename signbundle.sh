@@ -26,25 +26,19 @@ chmod 644 $(realpath "$DEST/Contents/Info.plist")
 
 MAIN_DIR="$DEST/Contents/MacOS"
 
-for fw in $(ls "$DEST/Contents/Frameworks")
-do
-    echo "Signing $DEST/Contents/Frameworks/$fw"
-    sign $(realpath "$DEST/Contents/Frameworks/$fw")
-done
-
-for plugin in $(find $DEST/Contents/Frameworks -name '*.dylib')
+for plugin in $(find $MAIN_DIR -name '*.dylib')
 do
     echo "Signing $plugin"
     sign $(realpath "$plugin")
 done
 
-for so in $(find $DEST/Contents/Resources -name '*.so')
+for so in $(find $MAIN_DIR -name '*.so')
 do
     echo "Signing $so"
     sign $(realpath "$so")
 done
 
-for binary in "python" "VPL3Server"
+for binary in "launch_objc"
 do
     echo "Signing $MAIN_DIR/$binary"
     sign --options=runtime $(realpath "$MAIN_DIR/$binary")
