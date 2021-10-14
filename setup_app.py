@@ -19,9 +19,18 @@ DATA_FILES = [
     ("", ["vpl3tt/doc"]),
 ]
 OPTIONS = {
-    #"packages": "sqlite3,tkinter,websockets,websocket-client",
-    "packages": "sqlite3,tkinter,websockets,websocket,thymiodirect",
+    # list of module names as used by import statements
+    # beware! "pip install websocket-client" for module websocket
+    "packages": "sqlite3,tkinter,websockets,websocket,qrcode,thymiodirect",
     "dist_dir": ".",
+    "excludes": [
+        "debugpy",
+        "ipykernel",
+        "IPython",
+        "numpy",
+        "wx",
+        "zmq",
+    ],
     "plist": {
         "CFBundleIdentifier": "ch.epfl.mobots.vpl3server",
         "CFBundleVersion": "0.1",

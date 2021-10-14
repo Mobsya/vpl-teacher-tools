@@ -11,7 +11,6 @@ from vpl3tt.com_ws import WSServer
 import json
 import sys
 import getopt
-import websocket
 
 from vpl3tt.db import Db
 
@@ -40,6 +39,7 @@ class VPLWebSocketServer:
 
         self.ws_link = None
         if ws_link_url:
+            import websocket
             self.ws_link = websocket.create_connection(ws_link_url)
 
     def run(self):

@@ -77,10 +77,11 @@ setup(
     long_description_content_type="text/markdown",
     url="https://mobots.epfl.ch",
     install_requires=[
+        # package names as known by pip
         "qrcode",
         "thymiodirect",
         "websockets",
-        "websocket-client",
+        "websocket-client",  # beware! pkg websocket-client for module websocket
     ],
     entry_points={
         "console_scripts": [
