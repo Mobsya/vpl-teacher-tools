@@ -42,7 +42,7 @@ jobs:
   - task: PublishBuildArtifacts@1
     inputs:
       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      artifactName: 'VPLServer-10-14.dmg'
+      artifactName: 'VPLServer-cxf-10-14.dmg'
 
 - job: 'BuildMacDmg1015'
   pool:
@@ -74,7 +74,7 @@ jobs:
   - task: PublishBuildArtifacts@1
     inputs:
       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      artifactName: 'VPLServer-10-15.dmg'
+      artifactName: 'VPLServer-cxf-10-15.dmg'
 
 - job: 'BuildMacDmg11'
   pool:
@@ -106,7 +106,7 @@ jobs:
   - task: PublishBuildArtifacts@1
     inputs:
       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      artifactName: 'VPLServer-11.dmg'
+      artifactName: 'VPLServer-cxf-11.dmg'
 
 
 

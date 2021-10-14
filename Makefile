@@ -249,18 +249,19 @@ whl: setup.py $(VPL3PKGFILES) $(DOCFILES) $(VPLFILES) $(THYMIOFILES) $(UIFILES) 
 .PHONY: VPL3Server.app
 VPL3Server.app: setup_app.py launch_objc.py $(VPL3PKGFILES) $(DOCFILES) $(VPLFILES) $(THYMIOFILES) $(UIFILES) $(UICLASSICFILES) $(UISVGFILES) $(TOOLSFILES) $(QRFILES) $(DATAFILES) $(BEHAVIORFILES)
 	rm -Rf build
-	python3 setup_cx_freeze.py bdist_mac
+	py2apppython3 setup_cx_freeze.py bdist_mac
 	./signbundle.sh VPL3Server.app "$(APPLE_CERTIFICATE_SIGNING_IDENTITY)"
 
 .PHONY: build/VPL3Server-cxf.app
 build/VPL3Server-cxf.app: setup_cx_freeze.py launch_objc.py $(VPL3PKGFILES) $(DOCFILES) $(VPLFILES) $(THYMIOFILES) $(UIFILES) $(UICLASSICFILES) $(UISVGFILES) $(TOOLSFILES) $(QRFILES) $(DATAFILES) $(BEHAVIORFILES)
 	rm -Rf build
 	python3 setup_cx_freeze.py bdist_mac
+	./signbundle.sh build/VPL3Server-cxf.app "$(APPLE_CERTIFICATE_SIGNING_IDENTITY)"
 
-VPLServer.dmg: VPL3Server.app readme-mac.txt
-	rm -Rf "VPLServer" $@
-	mkdir "VPLServer"
-	cp -R $^ "VPLServer"
+VPLServer.dmg: build/VPL3Server-cxf.app readme-mac.txt
+	rm -Rf "VPLServer-cxf" $@
+	mkdir "VPLServer-cxf"
+	cp -R $^ "VPLServer-cxf"
 	#hdiutil create -format UDZO -imagekey zlib-level=9 -srcfolder "VPLServer" $@
 	create-dmg \
     --volname "VPL Server" \
@@ -268,14 +269,14 @@ VPLServer.dmg: VPL3Server.app readme-mac.txt
     --window-pos 200 120 \
     --window-size 640 480 \
     --icon-size 100 \
-    --icon "VPL3Server.app" 100 300 \
-    --hide-extension "VPL3Server.app" \
+    --icon "VPL3Server-cxf.app" 100 300 \
+    --hide-extension "VPL3Server-cxf.app" \
 	--icon "readme-mac.txt" 100 100\
     --app-drop-link 500 300 \
-    "VPLServer.dmg" \
-    "VPLServer"
-	codesign --verify --verbose --timestamp -s "$(APPLE_CERTIFICATE_SIGNING_IDENTITY)" -f "VPLServer.dmg"
-	rm -Rf "VPLServer"
+    "VPLServer-cxf.dmg" \
+    "VPLServer-cxf"
+	codesign --verify --verbose --timestamp -s "$(APPLE_CERTIFICATE_SIGNING_IDENTITY)" -f "VPLServer-cxf.dmg"
+	rm -Rf "VPLServer-cxf"
 
 ServeFile.dmg: Serve\ File.app
 	rm -Rf "Serve File" $@
