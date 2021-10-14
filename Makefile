@@ -256,7 +256,6 @@ VPL3Server.app: setup_app.py launch_objc.py $(VPL3PKGFILES) $(DOCFILES) $(VPLFIL
 build/VPL3Server-cxf.app: setup_cx_freeze.py launch_objc.py $(VPL3PKGFILES) $(DOCFILES) $(VPLFILES) $(THYMIOFILES) $(UIFILES) $(UICLASSICFILES) $(UISVGFILES) $(TOOLSFILES) $(QRFILES) $(DATAFILES) $(BEHAVIORFILES)
 	rm -Rf build
 	python3 setup_cx_freeze.py bdist_mac
-	./signbundle.sh build/VPL3Server-cxf.app "$(APPLE_CERTIFICATE_SIGNING_IDENTITY)"
 
 VPLServer.dmg: build/VPL3Server-cxf.app readme-mac.txt
 	rm -Rf "VPLServer-cxf" $@

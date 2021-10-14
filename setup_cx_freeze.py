@@ -76,6 +76,8 @@ elif sys.platform == "darwin":
     options["bdist_mac"] = {
         "bundle_name": "VPL3Server-cxf",
         "custom_info_plist": info_plist_filename,
+        "codesign_identity":"$(APPLE_CERTIFICATE_SIGNING_IDENTITY)",
+        "codesign_entitlements": "allow.entitlements"
     }
 
 executable_options["base"] = base
