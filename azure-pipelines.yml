@@ -26,7 +26,7 @@ jobs:
     
   - script: |
       pip3 install -U py2app
-      pip3 install thymiodirect websockets websocket websocket_client qrcode
+      pip3 install thymiodirect websockets websocket_client qrcode
       pip3 install pyobjc-core
       pip3 install pyobjc-framework-cocoa
       make VPLServer.dmg
@@ -58,7 +58,7 @@ jobs:
     
   - script: |
       pip3 install -U py2app
-      pip3 install thymiodirect websockets websocket websocket_client qrcode
+      pip3 install thymiodirect websockets websocket_client qrcode
       pip3 install pyobjc-core
       pip3 install pyobjc-framework-cocoa
       make VPLServer.dmg
@@ -90,7 +90,7 @@ jobs:
     
   - script: |
       pip3 install -U py2app
-      pip3 install thymiodirect websockets websocket websocket_client qrcode
+      pip3 install thymiodirect websockets websocket_client qrcode
       pip3 install pyobjc-core
       pip3 install pyobjc-framework-cocoa
       make VPLServer.dmg
@@ -116,7 +116,7 @@ jobs:
   - script: |
       python3 -m pip install py2app
       python3 -m pip install cx_Freeze
-      python3 -m pip install thymiodirect websockets websocket websocket_client qrcode
+      python3 -m pip install thymiodirect websockets websocket_client qrcode
       python3 -m pip install tk
     displayName: 'Install with pip'
     
