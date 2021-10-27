@@ -87,6 +87,22 @@ class VPLWebSocketServer:
     def new_connection(self, websocket):
         return True  # accept
 
+    async def send_message(self, type, data, only_websockets=None):
+        msg = {
+            "sender": {
+                "type": "server"
+            },
+            "type": type,
+            "data": data
+        }
+        await self.ws.sendToAll(msg, only_websockets=only_websockets)
+
+    def schedule_send_message_threadsafe(self, type, data, only_websockets=None):
+        import asyncio
+        future = asyncio.run_coroutine_threadsafe(self.send_message(type, data, only_websockets),
+                                                  self.ws.loop)
+        future.result()
+
     async def process_message(self, websocket, session_id, msg):
         self.log_message(msg)
         db = Db(self.db_path)

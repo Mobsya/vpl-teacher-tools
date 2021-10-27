@@ -352,9 +352,16 @@ VPLTeacherTools.Pairing.prototype.beginSession = function (robotName, groupId) {
 	if (this.canBeginSession(robotName, groupId)) {
 		var self = this;
 		groupId = groupId || this.selectedGroupId;
+		var group = this.getGroup(groupId);
+		if (group && group.robot) {
+			if (robotName === group.robot) {
+				// re-assign same robot
+				return;
+			}
+		}
 		this.client.beginSession(groupId,
 			this.shortRobotName(robotName || this.selectedRobot),
-			true,
+			false, true,
 			{
 				onSuccess: function (r) {
 					self.selectGroup(groupId);
@@ -400,7 +407,7 @@ VPLTeacherTools.Pairing.prototype.endSession = function (sessionId) {
 VPLTeacherTools.Pairing.prototype.autoRobotAssociation = function () {
 	for (var i = 0; i < this.groups.length; i++) {
 		if (i < this.robots.length && this.robots[i].canFlash()) {
-			this.beginSession(this.robots[i].name, this.groups[i].group_id);
+			this.beginSession(this.robots[i].name, this.groups[i].group_id, false, true);
 		} else if (this.robots[i].session_id !== null) {
 			this.endSession(this.robots[i].session_id);
 		}

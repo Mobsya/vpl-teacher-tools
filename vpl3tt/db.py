@@ -567,14 +567,15 @@ class Db:
 
         return [row[0] for row in c.fetchall()]
 
-    def begin_session(self, group_id, robot, force):
+    def begin_session(self, group_id, robot, force, update):
+        session_id = self.get_session_robot(group_id)
         c = self._db.cursor()
-        if self.select_has_result("sessions", "groupid=?",
-                                  (group_id,)):
+        if session_id is not None:
+            # session for this group already exists
             if force:
                 c.execute("DELETE FROM sessions WHERE groupid=?",
                           (group_id,))
-            else:
+            elif not update:
                 raise ValueError("session already open for group")
         if not robot.startswith("!"):
             if self.select_has_result("sessions", "robot=?",
@@ -585,17 +586,34 @@ class Db:
                 else:
                     raise ValueError("robot already used")
         try:
-            c.execute("""
-                INSERT INTO sessions (groupid,robot,sessionid)
-                VALUES (?,?,lower(hex(randomblob(16))))
-            """, (group_id, robot))
-            rowid = c.lastrowid
-            session_id = self.get_first_result("sessionid", "sessions", "rowid=?",
-                                               (rowid,))[0]
-            self.session_cache[session_id] = group_id
+            if session_id is not None:
+                c.execute("""
+                    UPDATE sessions
+                    SET robot=?
+                    WHERE groupid=?
+                """, (robot, group_id))
+            else:
+                c.execute("""
+                    INSERT INTO sessions (groupid,robot,sessionid)
+                    VALUES (?,?,lower(hex(randomblob(16))))
+                """, (group_id, robot))
+                rowid = c.lastrowid
+                session_id = self.get_first_result("sessionid", "sessions", "rowid=?",
+                                                   (rowid,))[0]
+                self.session_cache[session_id] = group_id
         finally:
             self._db.commit()
         return session_id
+
+    def get_session_id(self, group_id):
+        r = self.get_first_result("sessionid", "sessions",
+                                  "groupid=?", (group_id,))
+        return r[0] if r is not None else None
+
+    def get_session_robot(self, group_id):
+        r = self.get_first_result("robot", "sessions",
+                                  "groupid=?", (group_id,))
+        return r[0] if r is not None else None
 
     def end_session(self, session_id):
         if not self.select_has_result("sessions", "sessionid=?",

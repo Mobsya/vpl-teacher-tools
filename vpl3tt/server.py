@@ -146,6 +146,7 @@ class Server:
             http_started = True
             if ws_started:
                 logging.debug("http thread: websocket already started")
+                self.http_server.set_server_ws(self.ws_server)
                 servers_started.set()
             else:
                 logging.debug("http thread: websocket not started yet")
@@ -170,6 +171,7 @@ class Server:
                 ws_started = True
                 if http_started:
                     logging.debug("websocket thread: http already started")
+                    self.http_server.set_server_ws(self.ws_server)
                     servers_started.set()
                 else:
                     logging.debug("websocket thread: http not started yet")

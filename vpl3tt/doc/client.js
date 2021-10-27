@@ -175,13 +175,16 @@ VPLTeacherTools.HTTPClient.prototype.listGroupsWithStudents = function (filterCl
 	});
 };
 
-VPLTeacherTools.HTTPClient.prototype.beginSession = function (groupId, robot, force, opt) {
+VPLTeacherTools.HTTPClient.prototype.beginSession = function (groupId, robot, force, update, opt) {
 	var url = "/api/beginSession?groupid=" + encodeURIComponent(groupId);
 	if (robot) {
 		url += "&robot=" + encodeURIComponent(robot);
 	}
 	if (force) {
 		url += "&force=true";
+	}
+	if (update) {
+		url += "&update=true";
 	}
 	this.rest(url, opt);
 };

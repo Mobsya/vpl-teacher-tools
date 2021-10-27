@@ -27,29 +27,67 @@ def create_plist(properties):
 
 __version__ = "0.1.0"
 
-include_files = []
-excludes = [
-	"curses",
-	"lib2to3",
-	"numpy",
-	"xmlrpc",
-]
-packages = ["os", "json", "websockets.legacy", ]
-
 build_exe = {
-    "packages": packages,
-    "include_files": include_files,
-    "excludes": excludes,
+    "packages": [
+        "os",
+        "json",
+        "websockets.legacy",
+    ],
+    "include_files": [],
+    "excludes": [
+    	"curses",
+    	"lib2to3",
+    	"numpy",
+        "wx",
+    	"xmlrpc",
+    ],
+}
+bdist_msi = {
+    "all_users": True,
+    "initial_target_dir": r"[ProgramFilesFolder]\VPLTeacherTools",
+    "data": {
+        "Shortcut": [
+            (
+                "DesktopShortcut",
+                "DesktopFolder",
+                "VPL3 Teacher Tools",
+                "TARGETDIR",
+                "[TARGETDIR]launch_tk.exe",
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                "TARGETDIR",
+            ),
+            (
+                "StartupShortcut",
+                "ProgramMenuFolder",
+                "VPL3 Teacher Tools",
+                "TARGETDIR",
+                "[TARGETDIR]launch_tk.exe",
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                "TARGETDIR",
+            ),
+        ]
+    }
 }
 launcher = "launch_tk.py"
 base = None
 options = {
     "build_exe": build_exe,
+    "bdist_msi": bdist_msi,
 }
 setup_options = {
-    "name": "VPL3Server-cx-Freeze",
+    "name": "VPL3TeacherTools",
     "description": "VPL3 Teacher Tools built with cx_Freeze",
-    # "version": __version__,
+    "version": __version__,
     "options": options,
 }
 executable_options = {}
@@ -59,8 +97,6 @@ if sys.platform == "win32":
     build_exe["include_msvcr"] = False
     # the end-user should download and install
     # https://aka.ms/vs/16/release/vc_redist.x64.exe
-    executable_options["shortcut_name"] = "VPL3 Server"
-    executable_options["shortcut_dir"] = "DesktopFolder"
 elif sys.platform == "darwin":
     launcher = "launch_objc.py"
     info_plist_filename = create_plist({
@@ -71,7 +107,7 @@ elif sys.platform == "darwin":
         "CFBundleDevelopmentRegion": "English",
         "CFBundleIdentifier": "VPL3 Server",
         "NSHumanReadableCopyright":
-            "2019-2020, École polytechnique fédérale de Lausanne (EPFL)",
+            "2019-2021, École polytechnique fédérale de Lausanne (EPFL)",
     })
     options["bdist_mac"] = {
         "bundle_name": "VPL3Server-cxf",
