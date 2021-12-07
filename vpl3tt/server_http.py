@@ -49,6 +49,7 @@ class VPLHTTPServer:
                  language=None,
                  full_url=False,
                  has_login_qr_code=False,
+                 autonomous_student_progress=True,
                  log_display=False,
                  advanced_sim_features=False,
                  dev_tools=False,
@@ -63,6 +64,7 @@ class VPLHTTPServer:
         self.tt_language = tt_language
         self.full_url = full_url
         self.has_login_qr_code = has_login_qr_code
+        self.autonomous_student_progress = autonomous_student_progress
         self.log_display = log_display
         self.advanced_sim_features = advanced_sim_features
         self.dev_tools = dev_tools
@@ -521,6 +523,8 @@ class VPLHTTPServer:
                               r"^/vpl-teacher-tools/.*\.(html|css|json|js)$")
         self.httpd.add_filter(lambda s: s.replace(b"$LOGINQRCODE", b"true" if self.has_login_qr_code else b"false"),
                               r"^/vpl-teacher-tools/.*\.(html|css|json|js)$")
+        self.httpd.add_filter(lambda s: s.replace(b"$AUTONOMOUSSTUDENTPROGRESS", b"true" if self.autonomous_student_progress else b"false"),
+                              r"^/.*\.(html|css|json|js)$")
         self.httpd.add_filter(lambda s: s.replace(b"$LOGDISPLAY", b"true"  if self.log_display else b"false"),
                               r"^/vpl-teacher-tools/.*\.(html|css|json|js)$")
         self.httpd.add_filter(lambda s: s.replace(b"$ADVANCEDSIMFEATURES", b"true"  if self.advanced_sim_features else b"false"),

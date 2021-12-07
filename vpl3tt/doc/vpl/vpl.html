@@ -28,6 +28,7 @@ body {
 }
 </style>
 
+<script src="../libs/jszip/jszip.js"></script>
 <script src="vpl-min.js"></script>
 <script src="thymio/thymio.js"></script>
 
@@ -66,6 +67,40 @@ window["vplUpload"] = function (filename, json) {
 	// empty (file sent by logger for action "vpl:upload")
 	// must be defined to show button "vpl:upload"
 };
+
+if ($AUTONOMOUSSTUDENTPROGRESS) {
+	var programs = [];
+	window["vplNextProgram"] = function (currentFilename, currentJson) {
+		if (window["vplSendToCom"]) {
+			if (currentJson) {
+				window["vplSendToCom"]({
+					"command": "save-program",
+					"name": currentFilename,
+					"content": currentJson
+				});
+			}
+			if (programs.length == 0) {
+ 				return null;
+			}
+			var nextIx = (programs.indexOf(currentFilename) + 1) % programs.length;
+			if (currentJson) {
+				window["vplSendToCom"]({
+					"command": "request-program",
+					"name": programs[nextIx]
+				});
+			}
+			return JSON.stringify({"filename": programs[nextIx]});
+		}
+		return null;
+	};
+	window["vplListenToCom"] = function (msg) {
+		switch (msg["type"]) {
+		case "list-of-programs":
+			programs = msg["data"];
+			break;
+		}
+	};
+}
 
 </script>
 

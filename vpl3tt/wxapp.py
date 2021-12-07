@@ -166,6 +166,12 @@ class Application(ApplicationBase, wx.App):
         self.frame.Bind(wx.EVT_MENU,
                         lambda event: self.do_menu_item_login_screen_qr_code(),
                         self.menu_item_login_screen_qr_code)
+        self.menu_item_autonomous_student_progress = options_menu.AppendCheckItem(-1,
+                                                                                  "Autonomous Pupil Progress")
+        self.menu_item_autonomous_student_progress.Check(self.has_login_qr_code)
+        self.frame.Bind(wx.EVT_MENU,
+                        lambda event: self.do_menu_item_autonomous_student_progress(),
+                        self.menu_item_autonomous_student_progress)
         self.menu_item_log_display = options_menu.AppendCheckItem(-1,
                                                                   "Log Display in Dashboard")
         self.menu_item_log_display.Check(self.log_display)
@@ -236,10 +242,11 @@ class Application(ApplicationBase, wx.App):
         self.menu_item_language_fr.Check(self.language == "fr")
         self.menu_item_language_de.Check(self.language == "de")
         self.menu_item_language_it.Check(self.language == "it")
-        bridge = self.set_bridge(self.bridge)
-        self.menu_item_bridge_tdm.Check(bridge == "tdm")
-        self.menu_item_bridge_jws.Check(bridge == "jws")
-        self.menu_item_bridge_none.Check(bridge != "tdm" and bridge != "jws")
+        if self.advanced:
+            bridge = self.set_bridge(self.bridge)
+            self.menu_item_bridge_tdm.Check(bridge == "tdm")
+            self.menu_item_bridge_jws.Check(bridge == "jws")
+            self.menu_item_bridge_none.Check(bridge != "tdm" and bridge != "jws")
 
     def update_qr_code(self):
         path = self.tt_abs_path()
@@ -280,15 +287,17 @@ class Application(ApplicationBase, wx.App):
         tr(self.menu_item_language_it, "Italian (English for Teacher Tools)")
         self.menubar.SetMenuLabel(self.menu_options, self.tr("Options"))
         tr(self.menu_item_login_screen_qr_code, "Login Screen QR Code")
+        tr(self.menu_item_autonomous_student_progress, "Autonomous Pupil Progress")
         tr(self.menu_item_log_display, "Log Display in Dashboard")
         tr(self.menu_item_add_default_files, "Add Default Files")
-        self.menubar.SetMenuLabel(self.menu_advanced, self.tr("Advanced"))
-        tr(self.menu_item_bridge_tdm, "Thymio Device Manager")
-        tr(self.menu_item_bridge_jws, "JSON WebSocket")
-        tr(self.menu_item_bridge_none, "No Robot")
-        tr(self.menu_item_shortened_urls, "Shortened URLs")
-        tr(self.menu_item_advanced_sim_features, "Advanced Simulator Features")
-        tr(self.menu_item_dev_tools, "Developer Tools")
+        if self.advanced:
+            self.menubar.SetMenuLabel(self.menu_advanced, self.tr("Advanced"))
+            tr(self.menu_item_bridge_tdm, "Thymio Device Manager")
+            tr(self.menu_item_bridge_jws, "JSON WebSocket")
+            tr(self.menu_item_bridge_none, "No Robot")
+            tr(self.menu_item_shortened_urls, "Shortened URLs")
+            tr(self.menu_item_advanced_sim_features, "Advanced Simulator Features")
+            tr(self.menu_item_dev_tools, "Developer Tools")
 
         self.launch_button.SetLabel(self.tr("Open tools in browser"))
         self.help.SetLabel(self.tr("help-message"))
@@ -318,6 +327,10 @@ class Application(ApplicationBase, wx.App):
 
     def do_menu_item_login_screen_qr_code(self):
         self.set_login_qr_code(self.menu_item_login_screen_qr_code.IsChecked())
+        self.save_prefs()
+
+    def do_menu_item_autonomous_student_progress(self):
+        self.set_autonomous_student_progress(self.menu_item_autonomous_student_progress.IsChecked())
         self.save_prefs()
 
     def do_menu_item_log_display(self):

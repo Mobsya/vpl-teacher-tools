@@ -292,3 +292,26 @@ Serve\ File.app: setup_serve_via_http.py serve_via_http.py
 .PHONY: oh
 oh:
 	ohcount $(PKGFILES) $(ROOTFILES) $(DOCFILES) $(TOOLSFILES)
+
+## targets to validate js code with closure compiler
+
+# Default closure compiler in current directory, used if closure-compiler isn't found
+# Update here or build with "make CLOSURECOMPILER=path" to match your environment
+# The current version can be found at https://github.com/google/closure-compiler/wiki/Binary-Downloads
+CLOSURECOMPILER ?= closure-compiler-v20190121.jar
+
+CLOSURE = $(shell if which closure-compiler >/dev/null; then echo closure-compiler; else echo java -jar $(CLOSURECOMPILER); fi)
+CLOSUREFLAGS = \
+        --language_in ECMASCRIPT6_STRICT \
+        --compilation_level ADVANCED_OPTIMIZATIONS \
+        --use_types_for_optimization \
+        --warning_level VERBOSE \
+        --summary_detail_level 2
+
+vpath %.js vpl3tt/doc:vpl3tt/doc/vpl-teacher-tools:vpl3tt/doc/libs/jszip
+
+.PHONY: cc
+cc: dashboard-min.js
+
+dashboard-min.js: dummy-defs.js ns.js client.js zipbundle.js dashboard.js translate.js filebrowser.js dashboard-gui.js
+	$(CLOSURE) $(CLOSUREFLAGS) $^ >$@ || (rm -f $@; false)

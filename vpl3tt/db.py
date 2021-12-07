@@ -997,6 +997,33 @@ class Db:
             "metadata": r[7]
         }
 
+    def get_file_by_name(self, filename):
+        r = self.get_first_result(
+            f"""fileid,
+                tag,
+                {"datetime(time,'localtime')" if Db.ORDER_TIME else "time"},
+                LENGTH(content),
+                owner,
+                content,
+                submitted,
+                metadata
+            """,
+            "files",
+            "name=?", (filename,))
+        if r is None:
+            raise ValueError("file id not found")
+        return {
+            "id": r[0],
+            "filename": filename,
+            "tag": r[1],
+            "time": r[2],
+            "size": r[3],
+            "owner": self.str_to_list(r[4]),
+            "content": r[5],
+            "submitted": r[6] != 0,
+            "metadata": r[7]
+        }
+
     def get_files(self, file_id_list):
         """Get multiple files."""
         if len(file_id_list) == 0:

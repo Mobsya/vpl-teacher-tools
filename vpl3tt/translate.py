@@ -28,6 +28,7 @@ class Translate:
             "Language": "Language",
             "Log Display in Dashboard": "Log Display in Dashboard",
             "Login Screen QR Code": "Login Screen QR Code",
+            "Autonomous Pupil Progress": "Autonomous Pupil Progress",
             "No Robot": "No Robot",
             "Number of connections:": "Number of connections:",
             "Open Tools in Browser": "Open Tools in Browser",

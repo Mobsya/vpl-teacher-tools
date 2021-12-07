@@ -36,6 +36,7 @@ window["vplStorageGetFunction"] = function (filename, fun) {
 		{
 			"filename": filename,
 			"readOnly": readOnly,
+			"fixedFilename": true,
 			"customizationMode": customizationMode
 		});
 	sessionStorage.setItem("initialUISettings", window["vplGetUIAsJSON"]());

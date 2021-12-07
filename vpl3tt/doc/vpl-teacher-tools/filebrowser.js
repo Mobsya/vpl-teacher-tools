@@ -1,7 +1,7 @@
 
 /**
 	@constructor
-	@param {Object} options
+	@param {VPLTeacherTools.FileBrowser.Options=} options
 */
 VPLTeacherTools.FileBrowser = function (options) {
 	this.teacherFiles = [];
@@ -22,11 +22,18 @@ VPLTeacherTools.FileBrowser = function (options) {
 	this.updateStudents();
 };
 
+/**
+	@typedef {{
+		onSets: (function (*):void | undefined)
+	}}
+*/
+VPLTeacherTools.FileBrowser.Options;
+
 /** Fetch all files from db and refresh their display
 	@param {{
 		renamedFileId: (number | undefined),
 		selectedFileIds: (Array.<number> | undefined)
-	}} opt
+	}=} opt
 	(renamedFileId: id of the file to rename; or selectedFileIds: list of files to select)
 */
 VPLTeacherTools.FileBrowser.prototype.updateFiles = function (opt) {
@@ -198,8 +205,15 @@ VPLTeacherTools.FileBrowser.prototype.setDefaultFile = function (fileId, suffix)
 	});
 };
 
+/**
+	@param {string} filename
+	@param {string} content
+	@param {boolean=} noRename
+	@param {Object=} props
+	@return {void}
+*/
 VPLTeacherTools.FileBrowser.prototype.addFile = function (filename, content, noRename, props) {
-	var props = props || {};
+	props = props || {};
 	var self = this;
 	this.client.addFile(filename, content,
 		props,
@@ -561,7 +575,7 @@ VPLTeacherTools.FileBrowser.setAnchorAndDownload = function (anchor, text, filen
 	if (typeof window.Blob === "function" && window.URL) {
 		// blob URL
 		if (isBase64) {
-			var url = "data:" + mimetype + ";base64," + text;
+			url = "data:" + mimetype + ";base64," + text;
 			fetch(url)
 				.then(res => res.blob())
 				.then(blob => {
@@ -671,10 +685,10 @@ VPLTeacherTools.FileBrowser.getFileSuffix = function (filename) {
 
 VPLTeacherTools.FileBrowser.getFileIconURL = function (filename) {
 	var suffix = VPLTeacherTools.FileBrowser.getFileSuffix(filename).toLowerCase();
-	return fileIconURL = {
+	return {
 		"aseba": "icon-file-program.svg",
 		"html": "icon-file-html.svg",
-        "md": "icon-file-md.svg",
+		"md": "icon-file-md.svg",
 		"jpg": "icon-file-img.svg",
 		"png": "icon-file-img.svg",
 		"svg": "icon-file-img.svg",
@@ -697,7 +711,7 @@ VPLTeacherTools.FileBrowser.suffixToMimetype = function (suffix) {
 		"html": "text/html",
 		"jpg": "image/jpeg",
 		"json": "application/json",
-        "md": "text/markdown",
+		"md": "text/markdown",
 		"pdf": "application/pdf",
 		"png": "image/png",
 		"svg": "image/svg+xml",

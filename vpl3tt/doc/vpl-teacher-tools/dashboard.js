@@ -4,7 +4,7 @@
 	@param {string} wsURL
 	@param {{
 		log: (function(string):void | undefined),
-		onGroups: (function(Array.<Objects>):void | undefined),
+		onGroups: (function(Array.<Object>):void | undefined),
 		onFiles: (function(Array.<Object>):void | undefined),
 		onAttentionFiles: (function(Array.<Object>):void | undefined),
 		onOpen: (function(Object,boolean):void | undefined),
@@ -16,7 +16,7 @@ VPLTeacherTools.Dashboard = function (wsURL, options) {
 	/** @type {WebSocket} */
 	this.ws = null;
 	this.wasConnected = false;
-	/** @type {function(boolean):void} */
+	/** @type {?function(boolean):void} */
 	this.onConnectionStateChanged = null;
 	var self = this;
 	this.reconnectId = setInterval(function () {
@@ -67,7 +67,7 @@ VPLTeacherTools.Dashboard = function (wsURL, options) {
 	@return {boolean}
 */
 VPLTeacherTools.Dashboard.prototype.isConnected = function () {
-	return this.ws && self.ws.readyState == 1;
+	return this.ws != null && this.ws.readyState == 1;
 };
 
 /** Refresh sessions by calling onGroups
@@ -75,8 +75,8 @@ VPLTeacherTools.Dashboard.prototype.isConnected = function () {
 	@return {void}
 */
 VPLTeacherTools.Dashboard.prototype.refreshSessions = function (sessions) {
-    if (this.options.onGroups) {
-        this.options.onGroups((sessions || this.sessions)
+	if (this.options.onGroups) {
+		this.options.onGroups((sessions || this.sessions)
 			.filter(function (session) {
 				return !session.special && session.students.length > 0;
 			})
@@ -84,41 +84,41 @@ VPLTeacherTools.Dashboard.prototype.refreshSessions = function (sessions) {
 				session.isConnected = this.wsConnections.indexOf(session.session_id) >= 0;
 				return session;
 			}, this));
-    }
+	}
 };
 
 /** Load the list of sessions
 	@return {void}
 */
 VPLTeacherTools.Dashboard.prototype.loadSessions = function () {
-    var self = this;
+	var self = this;
 	this.client.listSessions({
 		onSuccess: function (sessions) {
-            self.sessions = sessions.map(function (session) {
+			self.sessions = sessions.map(function (session) {
 				session.students = [];
 				session.lastVPLChangedLogEntry = null;
 				session.selected = false;
 
 				self.client.listGroupStudents(session.group_id, {
-                    onSuccess: function (students) {
-                        session.students = students;
-			            self.refreshSessions(sessions);
-                    }
-                });
+					onSuccess: function (students) {
+						session.students = students;
+						self.refreshSessions(sessions);
+					}
+				});
 
 				self.client.getLog(session.session_id, "vpl-changed", {
 					onSuccess: function (logEntries) {
 						if (logEntries.length > 0) {
 							session.lastVPLChangedLogEntry = logEntries[0];
-			            	self.refreshSessions(sessions);
+							self.refreshSessions(sessions);
 						}
 					}
 				});
 
 				return session;
 			});
-            self.refreshSessions();
-        }
+			self.refreshSessions();
+		}
 	});
 };
 
@@ -150,12 +150,12 @@ VPLTeacherTools.Dashboard.prototype.updateSessions = function (sessionIndex, msg
 VPLTeacherTools.Dashboard.prototype.updateFiles = function () {
 	var self = this;
 	this.client.listFiles({
-        filterStudent: this.filterStudent,
-        filterGroup: this.filterGroup,
-        last: this.filterLast,
+		filterStudent: this.filterStudent,
+		filterGroup: this.filterGroup,
+		last: this.filterLast,
 		getZip: true
-    },
-    {
+	},
+	{
 		onSuccess: function (files) {
 			var bundles = files.filter(function (file) {
 				return file.mark && /\.zip$/i.test(file.filename);
@@ -228,15 +228,15 @@ VPLTeacherTools.Dashboard.prototype.updateFiles = function () {
 					}
 				});
 			});
-            self.files = files.map(function (file) {
-                var file1 = Object.create(file);    // prototype-based "copy"
-                file1.selected = false;
-                return file1;
-            });
-            if (self.options.onFiles) {
-                self.options.onFiles(files);
-            }
-        }
+			self.files = files.map(function (file) {
+				var file1 = Object.create(file);	// prototype-based "copy"
+				file1.selected = false;
+				return file1;
+			});
+			if (self.options.onFiles) {
+				self.options.onFiles(files);
+			}
+		}
 	});
 };
 
@@ -253,28 +253,28 @@ VPLTeacherTools.Dashboard.prototype.toggleExpand = function (file) {
 
 VPLTeacherTools.Dashboard.prototype.openLastFile = function (group_id, group) {
 	this.client.getLastFileForGroup(group_id, {
-        onSuccess: function (file) {
+		onSuccess: function (file) {
 			var options = {
 				"initialFileName": file.filename,
 				"fileId": null,
 				"readOnly": true,
 				"customizationMode": false
 			};
-            sessionStorage.setItem("options", JSON.stringify(options));
-            sessionStorage.setItem("initialFileContent", file.content);
+			window.sessionStorage.setItem("options", JSON.stringify(options));
+			window.sessionStorage.setItem("initialFileContent", file.content);
 			document.location = "vpl$LANGSUFFIX.html?ui=$VPLUIURI&robot=sim&uilanguage=$LANGUAGE" +
 				(group ? "&user=" + encodeURIComponent(group) : "");
-        }
-    });
+		}
+	});
 };
 
 VPLTeacherTools.Dashboard.prototype.setDefaultProgram = function (fileId) {
 	var self = this;
-    this.client.setDefaultFile(fileId, "vpl3", {
-        onSuccess: function () {
+	this.client.setDefaultFile(fileId, "vpl3", {
+		onSuccess: function () {
 			self.updateFiles();
-        }
-    });
+		}
+	});
 };
 
 /** Get the index of a session specified by its id
@@ -290,11 +290,11 @@ VPLTeacherTools.Dashboard.prototype.sessionIndex = function (sessionId) {
 	@return {void}
 */
 VPLTeacherTools.Dashboard.prototype.selectGroup = function (session, state) {
-    session.selected = state === null ? !session.selected : state;
+	session.selected = state === null ? !session.selected : state;
 };
 
 VPLTeacherTools.Dashboard.prototype.isGroupSelected = function (session) {
-    return session.selected;
+	return session.selected;
 };
 
 VPLTeacherTools.Dashboard.prototype.getIdOfSelectedSessions = function () {
@@ -364,8 +364,8 @@ VPLTeacherTools.Dashboard.prototype.sendFile = function (filename, kind, content
 */
 VPLTeacherTools.Dashboard.prototype.sendFileById = function (fileId) {
 	var self = this;
-    this.client.getFile(fileId, {
-        onSuccess: function (file) {
+	this.client.getFile(fileId, {
+		onSuccess: function (file) {
 			var filename = file.filename;
 			if (file.tag) {
 				filename = file.tag + "/" + filename;
@@ -384,13 +384,13 @@ VPLTeacherTools.Dashboard.prototype.sendFileById = function (fileId) {
 			}[suffix] || "other";
 			var isBase64 = VPLTeacherTools.FileBrowser.storeAsBase64(filename);
 			self.sendFile(filename, kind, file.content, isBase64);
-        }
-    });
+		}
+	});
 };
 
 /** Send a zipbundle entry
-	@param {} zipbundle
-	@param {string} filename
+	@param {VPLTeacherTools.ZipBundle} zipbundle
+	@param {string} path
 	@return {void}
 */
 VPLTeacherTools.Dashboard.prototype.sendZipBundleEntry = function (zipbundle, path) {
@@ -407,13 +407,12 @@ VPLTeacherTools.Dashboard.prototype.sendZipBundleEntry = function (zipbundle, pa
 			"statement": "statement",
 			"attention": "suspend"
 		}[VPLTeacherTools.ZipBundle.Manifest.typeToString(manifestType)] || "other";
-		self.sendFile(path, kind, data, asBase64);
+		self.sendFile(path, kind, /** @type {string} */(data), asBase64);
 	});
 };
 
 /** Set the file to be displayed in suspended mode
-	@param {string} filename
-	@param {string} contentBase64
+	@param {string} html
 	@return {void}
 */
 VPLTeacherTools.Dashboard.prototype.setSuspendHTML = function (html) {
@@ -467,7 +466,7 @@ VPLTeacherTools.Dashboard.prototype.connect = function () {
 	var self = this;
 	this.ws.addEventListener("message", function (event) {
 		try {
-			var msg = JSON.parse(event.data);
+			var msg = /** @type {Object} */(JSON.parse(event.data));
 			switch (msg["type"]) {
 			case "hello":
 			case "change":

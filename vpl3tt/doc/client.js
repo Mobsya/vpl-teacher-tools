@@ -7,7 +7,7 @@
 	@constructor
 */
 VPLTeacherTools.HTTPClient = function () {
-	this.token = sessionStorage.getItem("token") || "";
+	this.token = window.sessionStorage.getItem("token") || "";
 	/** @type {(function():void|null)} */
 	this.onInvalidToken = null;
 };
@@ -309,7 +309,7 @@ VPLTeacherTools.HTTPClient.prototype.shortenURL = function (url, cb) {
 		var shortenedURL = this.responseText.trim();
 		cb(shortenedURL);
 	});
-	var url = "/api/shortenURL?u=" + encodeURIComponent(url);
+	url = "/api/shortenURL?u=" + encodeURIComponent(url);
 	if (this.token) {
 		// add token
 		url += "&token=" + this.token;	// this.token is still encoded

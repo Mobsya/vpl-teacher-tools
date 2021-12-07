@@ -68,6 +68,11 @@ class Application(ApplicationBase):
                     lambda sender: self.menu_item_login_QR_code()
                 ],
                 [
+                    "Autonomous Pupil Progress",
+                    None,
+                    lambda sender: self.menu_item_autonomous_student_progress()
+                ],
+                [
                     "Log Display in Dashboard",
                     None,
                     lambda sender: self.menu_item_log_display()
@@ -247,6 +252,9 @@ class Application(ApplicationBase):
         item = self.app_objc.getMenuItemWithTitle_inMenu_("Login Screen QR Code", "Options")
         item.setState_(1 if self.has_login_qr_code else 0)
 
+        item = self.app_objc.getMenuItemWithTitle_inMenu_("Autonomous Pupil Progress", "Options")
+        item.setState_(1 if self.autonomous_student_progress else 0)
+
         item = self.app_objc.getMenuItemWithTitle_inMenu_("Log Display in Dashboard", "Options")
         item.setState_(1 if self.log_display else 0)
 
@@ -288,6 +296,11 @@ class Application(ApplicationBase):
 
     def menu_item_login_QR_code(self):
         self.set_login_qr_code(not self.has_login_qr_code)
+        self.update_menu_state()
+        self.save_prefs()
+
+    def menu_item_autonomous_student_progress(self):
+        self.set_autonomous_student_progress(not self.autonomous_student_progress)
         self.update_menu_state()
         self.save_prefs()
 

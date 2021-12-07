@@ -22,6 +22,7 @@ def add_translations_fr(tr):
         "Language": "Langue",
         "Log Display in Dashboard": "Journal dans le tableau de bord",
         "Login Screen QR Code": "QR code sur la page de login",
+        "Autonomous Pupil Progress": "Progression autonome des élèves",
         "No Robot": "Aucun robot",
         "Number of connections:": "Nombre de connexions:",
         "Number of robots:": "Nombre de robots:",

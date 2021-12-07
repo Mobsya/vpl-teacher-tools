@@ -11,8 +11,11 @@ from vpl3tt.com_ws import WSServer
 import json
 import sys
 import getopt
+import os.path
+import base64
 
 from vpl3tt.db import Db
+from vpl3tt.zipbundle import ZipBundle
 
 
 class VPLWebSocketServer:
@@ -36,6 +39,8 @@ class VPLWebSocketServer:
         self.on_disconnect_cb = on_disconnect
         self.logger = logger
         self.default_program_filename = default_program_filename
+        self.program_filenames = []
+        self.files_for_program_filename = {}
 
         self.ws_link = None
         if ws_link_url:
@@ -157,6 +162,31 @@ class VPLWebSocketServer:
                         "type": "defaultfile",
                         "data": data
                     })
+                    # send all program statements if any
+                    files = db.list_files(self,
+                                          order=Db.ORDER_FILENAME,
+                                          get_zip=True)
+                    self.program_filenames = []
+                    self.files_for_program_filename = {}
+                    for file in files:
+                        _, suffix = os.path.splitext(file["filename"])
+                        suffix = suffix.lower()
+                        if suffix == ".vpl3":
+                            self.program_filenames.append(file["filename"])
+                            self.files_for_program_filename[file["filename"]] = file["filename"]
+                        elif suffix == ".zip":
+                            zb = ZipBundle(file["filename"])
+                            zb.load_from_base64(file["content"])
+                            if "vpl3" in zb.manifest and len(zb.manifest["vpl3"]) > 0:
+                                self.program_filenames.append(zb.manifest["vpl3"][0])
+                                self.files_for_program_filename[zb.manifest["vpl3"][0]] = file["filename"]
+                    await self.ws.send(websocket, {
+                        "sender": {
+                            "type": "server"
+                        },
+                        "type": "list-of-programs",
+                        "data": self.program_filenames
+                    })
                 except Exception:
                     await self.ws.send(websocket, {
                         "sender": {
@@ -207,6 +237,61 @@ class VPLWebSocketServer:
                 await self.ws.send(ws, msg)
             if self.ws_link:
                 self.ws_link.send(json.dumps(msg))
+        elif msg["type"] == "client":
+            # custom messages specific to teacher tools
+            websocket.is_connected = True
+            if msg["data"]["command"] == "save-program":
+                # save file
+                session_id = msg["sender"]["sessionid"]
+                filename = msg["data"]["name"] or "-.vpl"
+                # filename can be prefixed with "tag/"; get tag
+                filename_parts = filename.split("/")
+                if len(filename_parts) > 1:
+                    tag = filename_parts[0]
+                    filename = filename_parts[-1]
+                else:
+                    tag = None
+                content = msg["data"]["content"]
+                group_id = db.get_session_group_id(session_id)
+                db.add_file(filename, tag, content, group_id=group_id)
+            elif msg["data"]["command"] == "request-program":
+                # send files associated to requested program
+                program_filename = msg["data"]["name"]
+                filename = self.files_for_program_filename[program_filename]
+                _, suffix = os.path.splitext(filename)
+                suffix = suffix.lower()
+                content = db.get_file_by_name(filename)["content"]
+                async def send_file(filename, kind, content, base64=False):
+                    await self.ws.send(websocket, {
+                        "sender": {
+                            "type": "self",
+                        },
+                        "type": "file",
+                        "data": {
+                            "name": filename,
+                            "kind": kind,
+                            "metadata": {},
+                            "content": content,
+                            "base64": base64
+                        }
+                    })
+                if suffix == ".vpl3":
+                    await send_file(filename, "vpl3", content)
+                elif suffix == ".zip":
+                    # send first vpl3, doc, statement
+                    zb = ZipBundle(filename)
+                    zb.load_from_base64(content)
+                    for kind in ["vpl3", "doc", "statement"]:
+                        if kind in zb.manifest and len(zb.manifest[kind]) > 0:
+                            filename = zb.manifest[kind][0]
+                            _, suffix = os.path.splitext(filename)
+                            if suffix in {".gif", ".jpeg", ".jpg", ".png"}:
+                                await send_file(filename, kind,
+                                                str(base64.b64encode(zb.read_as_bytes(filename)), "utf-8"),
+                                                True)
+                            else:
+                                await send_file(filename, kind,
+                                                zb.read_as_str(filename))
 
     def on_connect(self, session_id):
         self.session_ids.add(session_id)

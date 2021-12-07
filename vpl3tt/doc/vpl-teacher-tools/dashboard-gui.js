@@ -1,5 +1,9 @@
 var dashboard = null;
 
+/**
+	@param {string} id
+	@return {Element}
+*/
 function clearChildren(id) {
 	var el = document.getElementById(id);
 	while (el.firstElementChild) {
@@ -8,6 +12,12 @@ function clearChildren(id) {
 	return el;
 }
 
+/**
+	@param {string} id
+	@param {Array.<Array.<string>>=} labels
+	@param {Array.<string>=} colClasses
+	@return {Element}
+*/
 function clearTable(id, labels, colClasses) {
 	var table = clearChildren(id);
 	if (colClasses) {
@@ -119,9 +129,9 @@ function fillGroupTable(sessionArray, dashboard) {
 					btn.textContent = filename;
 					btn.addEventListener("click", function () {
 						dashboard.openLastFile(session.group_id,
-                            session.students ? session.students.join(", ") : session.group);
+							session.students ? session.students.join(", ") : session.group);
 					}, false);
-				    td.appendChild(btn);
+					td.appendChild(btn);
 				}
 				tr.appendChild(td);
 
@@ -213,7 +223,7 @@ function fillFileTable(fileArray, dashboard) {
 
 		// tag
 		if (dashboard.options.showTags) {
-			var td = document.createElement("td");
+			td = document.createElement("td");
 			td.textContent = file.tag;
 			tr.appendChild(td);
 		}
@@ -307,8 +317,8 @@ window.addEventListener("load", function () {
 				"readOnly": readOnly,
 				"customizationMode": /\.vpl3ui/.test(file.filename)
 			};
-            sessionStorage.setItem("options", JSON.stringify(options));
-            sessionStorage.setItem("initialFileContent", file.content);
+			window.sessionStorage.setItem("options", JSON.stringify(options));
+			window.sessionStorage.setItem("initialFileContent", file.content);
 			document.location = "vpl$LANGSUFFIX.html?robot=sim&uilanguage=$LANGUAGE" +
 				(teacherFile ? "&role=teacher" : "") +
 				(file.students ? "&user=" + encodeURIComponent(file.students.join(", ")) : "");

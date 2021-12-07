@@ -67,6 +67,7 @@ class ApplicationBase:
         self.log_display = False
         self.advanced_sim_features = False
         self.has_login_qr_code = False
+        self.autonomous_student_progress = True
         self.dev_tools = False
         self.load_ui_list()
         self.set_bridge("tdm")
@@ -152,6 +153,10 @@ class ApplicationBase:
         self.has_login_qr_code = b
         self.server.http_server.has_login_qr_code = b
 
+    def set_autonomous_student_progress(self, b):
+        self.autonomous_student_progress = b
+        self.server.http_server.autonomous_student_progress = b
+
     def set_dev_tools(self, b):
         self.dev_tools = b
         self.server.http_server.dev_tools = b
@@ -202,6 +207,7 @@ class ApplicationBase:
             "vpl_ui": self.vpl_ui,
             "full_url": self.server.http_server.full_url,
             "login_qr_code": self.server.http_server.has_login_qr_code,
+            "autonomous_student_progress": self.server.http_server.autonomous_student_progress,
             "log_display": self.log_display,
             "advanced_sim_features": self.advanced_sim_features,
             "dev_tools": self.dev_tools,
@@ -229,6 +235,8 @@ class ApplicationBase:
                     self.set_full_url(prefs["full_url"])
                 if "login_qr_code" in prefs:
                     self.set_login_qr_code(prefs["login_qr_code"])
+                if "autonomous_student_progress" in prefs:
+                    self.set_autonomous_student_progress(prefs["autonomous_student_progress"])
                 if "log_display" in prefs:
                     self.set_log_display(prefs["log_display"])
                 if "advanced_sim_features" in prefs:

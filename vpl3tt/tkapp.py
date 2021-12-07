@@ -100,6 +100,10 @@ class Application(ApplicationBase, tk.Tk):
         self.v_login_qr_code.trace("w",
                                    lambda name, i, op:
                                    self.menu_item_login_qr_code(self.v_login_qr_code.get()))
+        self.v_autonomous_student_progress = tk.BooleanVar(value=False)
+        self.v_autonomous_student_progress.trace("w",
+                                                 lambda name, i, op:
+                                                 self.menu_item_autonomous_student_progress(self.v_autonomous_student_progress.get()))
         self.v_log_in_dashboard = tk.BooleanVar(value=False)
         self.v_log_in_dashboard.trace("w",
                                       lambda name, i, op:
@@ -139,6 +143,8 @@ class Application(ApplicationBase, tk.Tk):
         self.options_menu = tk.Menu(menubar, tearoff=False)
         self.options_menu.add_checkbutton(variable=self.v_login_qr_code)
         menu_items["Login Screen QR Code"] = (self.options_menu, self.options_menu.index("end"))
+        self.options_menu.add_checkbutton(variable=self.v_autonomous_student_progress)
+        menu_items["Autonomous Pupil Progress"] = (self.options_menu, self.options_menu.index("end"))
         self.options_menu.add_checkbutton(variable=self.v_log_in_dashboard)
         menu_items["Log Display in Dashboard"] = (self.options_menu, self.options_menu.index("end"))
         self.options_menu.add_separator()
@@ -185,6 +191,7 @@ class Application(ApplicationBase, tk.Tk):
         self.v_vpl_ui.set(self.vpl_ui)
         self.v_shorten_url.set(not self.full_url)
         self.v_login_qr_code.set(self.has_login_qr_code)
+        self.v_autonomous_student_progress.set(self.autonomous_student_progress)
         self.v_log_in_dashboard.set(self.log_display)
         self.v_advanced_sim_features.set(self.advanced_sim_features)
         self.v_dev_tools.set(self.dev_tools)
@@ -242,6 +249,10 @@ class Application(ApplicationBase, tk.Tk):
 
     def menu_item_login_qr_code(self, b):
         self.set_login_qr_code(b)
+        self.save_prefs()
+
+    def menu_item_autonomous_student_progress(self, b):
+        self.set_autonomous_student_progress(b)
         self.save_prefs()
 
     def menu_item_log_in_dashboard(self, b):

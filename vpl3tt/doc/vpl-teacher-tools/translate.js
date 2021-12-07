@@ -1,4 +1,9 @@
 
+/**
+	@param {string} str
+	@param {string=} language
+	@return {string}
+*/
 VPLTeacherTools.translate = function(str, language) {
 	/** @const */
 	var en = {
@@ -61,6 +66,11 @@ VPLTeacherTools.translate = function(str, language) {
 	return tr || str;
 };
 
+/**
+	@param {Array.<string>} a
+	@param {string=} language
+	@return {Array.<string>}
+*/
 VPLTeacherTools.translateArray = function (a, language) {
 	return a.map(function (str) {
 		return VPLTeacherTools.translate(str, language);
